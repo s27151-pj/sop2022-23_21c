@@ -1,3 +1,5 @@
+1.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -45,6 +47,107 @@ int main() {
     free(trainA);
     free(trainB);
     free(trainC);
+
+    return 0;
+}
+
+2.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Train {
+    int capacity;
+    struct Train* prevTrain;
+    struct Train* nextTrain;
+};
+
+struct Train* createTrain(const int capacity) {
+    struct Train* newTrain = malloc(sizeof(struct Train));
+    if (newTrain == NULL) {
+        printf("Błąd alokacji pamięci!\n");
+        exit(1);
+    }
+    newTrain->capacity = capacity;
+    newTrain->prevTrain = NULL;
+    newTrain->nextTrain = NULL;
+    printf("Stworzono nowy pociąg o pojemności %d w %p\n", capacity, newTrain);
+    return newTrain;
+}
+
+void showTrain(const struct Train* train) {
+    if (train == NULL) {
+        printf("Pociąg nie istnieje.\n");
+    } else {
+        printf("Pojemność: %d, adres w pamięci: %p, poprzedni pociąg w: %p, następny pociąg w: %p\n",
+               train->capacity, train, train->prevTrain, train->nextTrain);
+    }
+}
+
+int main() {
+    struct Train* trainA = NULL;
+    struct Train* trainB = NULL;
+    struct Train* trainC = NULL;
+
+    trainA = createTrain(1000);
+    trainB = createTrain(500);
+    trainC = createTrain(750);
+
+    trainA->nextTrain = trainB;
+    trainB->prevTrain = trainA;
+    trainB->nextTrain = trainC;
+    trainC->prevTrain = trainB;
+
+    showTrain(trainA);
+    showTrain(trainB);
+    showTrain(trainC);
+
+    free(trainA);
+    free(trainB);
+    free(trainC);
+
+    return 0;
+}
+
+3.
+
+#include <stdio.h>
+
+// Wersja rekurencyjna
+int fibonacciRec(int n) {
+    if (n <= 1) {
+        return n;
+    } else {
+        return fibonacciRec(n - 1) + fibonacciRec(n - 1);
+    }
+}
+
+// Wersja iteracyjna
+int fibonacciIter(int n) {
+    if (n <= 1) {
+        return n;
+    }
+
+    int prev1 = 0;
+    int prev2 = 1;
+    int fib = 0;
+
+    for (int i = 2; i <= n; i++) {
+        fib = prev1 + prev2;
+        prev1 = prev2;
+        prev2 = fib;
+    }
+
+    return fib;
+}
+
+int main() {
+    int n;
+    printf("Podaj numer elementu ciągu Fibonacciego: ");
+    scanf("%d", &n);
+
+    printf("Rekurencyjnie: %d\n", fibonacciRec(n));
+    printf("Iteracyjnie: %d\n", fibonacciIter(n));
 
     return 0;
 }
