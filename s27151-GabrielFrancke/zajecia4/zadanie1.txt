@@ -1,0 +1,56 @@
+1.
+
+#include <stdio.h>
+
+int main() {
+    int wynik = 0;
+    int liczba = 0;
+    
+    while (1) {
+        printf("Podaj liczbe: ");
+        scanf("%d", &liczba);
+        
+        if (liczba == 0) {
+            break;
+        }
+        
+        wynik += liczba;
+    }
+    
+    printf("Wynik: %d\n", wynik);
+    
+    return wynik;
+}
+
+3.
+
+#include<stdio.h>
+
+int main(){
+	int height;
+	int stars = 1;
+	int spaces;
+	int i, j, k;
+
+	printf("Podaj wielkosc choinki: ");
+	scanf("%d", &height);
+	
+	spaces = height - 1;
+
+	for(i = 0; i < height; i++){
+		for(j = 0; j < spaces; j++){
+			printf(" ");	
+		}
+
+		for(k = 0; k < stars; k++){
+			printf("*");
+		}
+
+		spaces--;
+		stars += 2;
+
+		printf("\n");
+	}
+
+	return 0;
+}
