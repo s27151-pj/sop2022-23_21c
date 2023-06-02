@@ -17,3 +17,15 @@ Dzisiejsze zajęcia były bardzo pouczające. Dzięki nim:
 Opanowałem umiejętność wykorzystywania pętli "for".
 Zdobyłem wiedzę na temat tworzenia funkcji i ich użyteczności.
 Dowiedziałem się, jak efektywnie korzystać z tablic do przechowywania i manipulowania danymi.
+
+2023-05-04
+Na zajęciach prowadzący zaprezentował język C, korzystając z systemu Linux. Wyjaśnił nam, jak kompilować kod ręcznie oraz jak wygląda składnia C i działanie wskaźników.
+Mam wrażenie, że lepiej zrozumiałem działanie wskaźników.
+Zapoznanie się również z edytorem Vim 
+
+
+2023-05-19
+Na zajęciach prowadzący omówił działanie procesów oraz jak korzystać z nich w języku C. Wykonaliśmy również kilka zadań praktycznych.
+Bardziej rozbudowane opcje Vim'a również zostały przedstawione i omówione.
+Prowadzący polecił nam również używanie polecenia "man" w systemie Linux, które jest bardzo pomocne w wyszukiwaniu i zrozumieniu dokumentacji.
+
