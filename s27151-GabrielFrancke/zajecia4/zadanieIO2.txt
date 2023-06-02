@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 16
+
+void drukujLinie(unsigned char *buffer, int offset, int bytesRead) {
+    int i;
+    printf("%08x  ", offset);
+    for (i = 0; i < BUFFER_SIZE; i++) {
+        if (i < bytesRead) {
+            printf("%02x ", buffer[i]);
+        } else {
+            printf("   ");
+        }
+    }
+    printf(" ");
+    for (i = 0; i < bytesRead; i++) {
+        if (buffer[i] >= 32 && buffer[i] <= 126) {
+            printf("%c", buffer[i]);
+        } else {
+            printf(".");
+        }
+    }
+    printf("\n");
+}
+
+int main(int argc, char *argv[]) {
+    FILE *file;
+    unsigned char *buffer;
+    size_t bytesRead;
+    int offset = 0;
+
+    if (argc < 2) {
+        printf("Podaj nazwę pliku jako argument\n");
+        return 1;
+    }
+
+    file = fopen(argv[1], "rb");
+    if (file == NULL) {
+        printf("Nie udało się otworzyć pliku %s\n", argv[1]);
+        return 1;
+    }
+
+    buffer = (unsigned char *) malloc(BUFFER_SIZE * sizeof(unsigned char));
+    if (buffer == NULL) {
+        printf("Błąd alokacji pamięci\n");
+        fclose(file);
+        return 1;
+    }
+
+    while ((bytesRead = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, file)) > 0) {
+        drukujLinie(buffer, offset, bytesRead);
+        offset += bytesRead;
+    }
+
+    free(buffer);
+    fclose(file);
+
+    return 0;
+}
