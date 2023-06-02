@@ -1,0 +1,82 @@
+1. 
+
+#include<stdio.h>
+
+int main(){
+	FILE *plik;
+	int liczbaElementow, liczba;
+
+	plik = fopen("nazwa_pliku.txt", "r");
+	if(plik == NULL){
+		printf("Nie można otworzyć pliku.\n");
+		return 1;
+	}
+
+	fscanf(plik, "%d", &liczbaElementow);
+
+	printf("Liczby wczytane z pliku:\n");
+	for(int i = 0; i < liczbaElementow; i++){
+		fscanf(plik, "%d", &liczba);
+		printf("%d\n", liczba);
+	}
+
+	fclose(plik);
+
+	return 0;
+}
+
+2.
+
+#include<stdio.h>
+#include<stdlib.h>
+
+int main(int argc, char *argv[]) {
+	FILE *plik;
+	int liczbaElementow, liczba, i;
+	int *tablica;
+
+	if (argc == 1) {
+		printf("Podaj jeden argument: ");
+		scanf("%d", &liczbaElementow);
+		tablica = (int *)malloc(liczbaElementow * sizeof(int));
+		if (tablica == NULL) {
+			printf("Blad alokacji pamieci.\n");
+			return 1;
+		}
+		printf("Podaj elementy ciagu:\n");
+		for (i = 0; i < liczbaElementow; i++) {
+			scanf("%d", &tablica[i]);
+		}
+	}
+	else if (argc == 2) {
+		plik = fopen(argv[1], "r");
+		if (plik == NULL) {
+			printf("Nie mozna otworzyc pliku.\n");
+			return 1;
+		}
+		fscanf(plik, "%d", &liczbaElementow);
+		tablica = (int *)malloc(liczbaElementow * sizeof(int));
+		if (tablica == NULL) {
+			printf("Blad alokacji pamieci.\n");
+			fclose(plik);
+			return 1;
+		}
+		for (i = 0; i < liczbaElementow; i++) {
+			fscanf(plik, "%d", &tablica[i]);
+		}
+		fclose(plik);
+	}
+	else {
+		printf("Nieprawidlowa liczba argumentow.\n");
+		return 1;
+	}
+
+	printf("Odwrotna kolejnosc: \n");
+	for (i = liczbaElementow - 1; i >= 0; i--) {
+		printf("%d\n", tablica[i]);
+	}
+
+	free(tablica);
+
+	return 0;
+}
