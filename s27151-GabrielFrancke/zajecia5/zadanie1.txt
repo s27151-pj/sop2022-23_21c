@@ -16,3 +16,32 @@ int main() {
 
     return 0;
 }
+
+2.
+
+#include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int main() {
+    pid_t pid = fork(); 
+
+    if (pid < 0) {
+        fprintf(stderr, "Blad fork()\n");
+        return 1;
+    } else if (pid == 0) {
+        printf("Proces potomny:\n");
+        printf("PID: %d\n", getpid());
+        printf("PPID: %d\n", getppid());
+    } else {
+        printf("Proces rodzica:\n");
+        printf("PID: %d\n", getpid());
+        printf("PPID: %d\n", getppid());
+
+        wait(NULL);
+    }
+
+    return 0;
+}
+
