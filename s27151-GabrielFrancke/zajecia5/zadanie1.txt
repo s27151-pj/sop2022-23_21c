@@ -1,1 +1,18 @@
+1.
 
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int main() {
+
+    printf("PID: %d\n", getpid()); //  PID 
+    printf("PPID: %d\n", getppid()); //  PPID
+
+    char input[256];
+    printf("Oczekiwanie na dane od użytkownika...\n");
+    fgets(input, sizeof(input), stdin);
+
+    return 0;
+}
