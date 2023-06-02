@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Train {
+    int capacity;
+    struct Train* nextTrain;
+};
+
+struct Train* createTrain(const int capacity) {
+    struct Train* newTrain = malloc(sizeof(struct Train));
+    if (newTrain == NULL) {
+        printf("Błąd alokacji pamięci!\n");
+        exit(1);
+    }
+    newTrain->capacity = capacity;
+    newTrain->nextTrain = NULL;
+    printf("Stworzono nowy pociąg o pojemności %d w %p\n", capacity, newTrain);
+    return newTrain;
+}
+
+void showTrain(const struct Train* train) {
+    if (train == NULL) {
+        printf("Pociąg nie istnieje.\n");
+    } else {
+        printf("Pojemność: %d, adres w pamięci: %p, następny pociąg w: %p\n", train->capacity, train, train->nextTrain);
+    }
+}
+
+int main() {
+    struct Train* trainA = NULL;
+    struct Train* trainB = NULL;
+    struct Train* trainC = NULL;
+
+    trainA = createTrain(1000);
+    trainB = createTrain(500);
+    trainC = createTrain(750);
+
+    trainA->nextTrain = trainB;
+    trainB->nextTrain = trainC;
+
+    showTrain(trainA);
+    showTrain(trainB);
+    showTrain(trainC);
+
+    free(trainA);
+    free(trainB);
+    free(trainC);
+
+    return 0;
+}
