@@ -1,1 +1,56 @@
+#include <stdio.h>
 
+int max(int a, int b) {
+    if (a >= b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int min(int a, int b) {
+    if (a <= b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int sum(int a, int b) {
+    return a + b;
+}
+int forAll(int* array, int count, int (*func)(int, int)) {
+    int result = array[0];
+    for (int i = 1; i < count; i++) {
+        result = func(result, array[i]);
+    }
+    return result;
+}
+
+int main() {
+    int functionId;
+    int elementCount;
+
+    printf("Podaj numer funkcji (0 - maksimum, 1 - minimum, 2 - suma): ");
+    scanf("%d", &functionId);
+
+    /* Sprawdzanie argumentów */
+    if (functionId >= 0 && functionId <= 2) {
+        printf("Podaj liczbę elementów ciągu: ");
+        scanf("%d", &elementCount);
+
+        int numbArray[elementCount];
+        for (int i = 0; i < elementCount; i++) {
+            scanf("%d", &numbArray[i]);
+        }
+
+        int (*array[])(int, int) = {max, min, sum};
+        int result = forAll(numbArray, elementCount, array[functionId]);
+        printf("Wynik: %d\n", result);
+
+        return 0;
+    } else {
+        printf("Błędne argumenty\n");
+        return 1;
+    }
+}
