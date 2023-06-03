@@ -18,14 +18,19 @@ Opanowałem umiejętność wykorzystywania pętli "for".
 Zdobyłem wiedzę na temat tworzenia funkcji i ich użyteczności.
 Dowiedziałem się, jak efektywnie korzystać z tablic do przechowywania i manipulowania danymi.
 
-2023-05-04
+2023-04-22
 Na zajęciach prowadzący zaprezentował język C, korzystając z systemu Linux. Wyjaśnił nam, jak kompilować kod ręcznie oraz jak wygląda składnia C i działanie wskaźników.
 Mam wrażenie, że lepiej zrozumiałem działanie wskaźników.
 Zapoznanie się również z edytorem Vim 
 
 
-2023-05-19
+2023-05-06
 Na zajęciach prowadzący omówił działanie procesów oraz jak korzystać z nich w języku C. Wykonaliśmy również kilka zadań praktycznych.
 Bardziej rozbudowane opcje Vim'a również zostały przedstawione i omówione.
 Prowadzący polecił nam również używanie polecenia "man" w systemie Linux, które jest bardzo pomocne w wyszukiwaniu i zrozumieniu dokumentacji.
 
+
+2023-05-20
+Na zajęciach prowadzący zaprezentował działanie sygnałów oraz przedstawił nam prosty serwer plików.
+Uważam że wykorzystanie sygnałów jest teamatem dość zaawansowanym.n
+Otzymaliśmy na zajeęciach rónież złożone i skomplikowane zadania, niestety przez natłok pracy- połączenia roboty i końca stódiów gdzie teraz u każdego są egzaminy nie starczyło mi czasu by przerobić zadania, mam nadzieję że uda mi się nadrobić materiał.
