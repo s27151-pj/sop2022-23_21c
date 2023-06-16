@@ -1,1 +1,60 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
+
+
+#define LOCK_FILE "/tmp/lock"
+
+void signalHandler1(int sig) {
+    printf("Wykryto próbę uruchomienia drugiej instancji programu.\n");
+}
+
+void signalHandler2(int sig) {
+    remove(LOCK_FILE);
+    exit(0);
+}
+
+int main() {
+    FILE* filePtr, * lockFilePtr;
+    int masterPID = getpid();
+    int filePID;
+    char buffer[16];
+    signal(SIGINT, signalHandler2);
+    signal(SIGUSR1, signalHandler1);
+
+    lockFilePtr = fopen(LOCK_FILE, "r");
+    if (lockFilePtr) {
+        fclose(lockFilePtr);
+        return 0;
+    }
+
+    lockFilePtr = fopen(LOCK_FILE, "w");
+
+    if (!lockFilePtr) {
+        fclose(lockFilePtr);
+        return 1;
+    }
+
+    if (access(LOCK_FILE, F_OK) == 0) {
+        filePtr = fopen(LOCK_FILE, "r");
+
+        while (fgets(buffer, 16, filePtr) != NULL) {
+            filePID = atoi(buffer);
+        }
+        kill(filePID, SIGUSR1);
+    }
+    else {
+        filePtr = fopen(LOCK_FILE, "w");
+        fprintf(filePtr, "%d", masterPID);
+        fclose(filePtr);
+        while (1) {
+            sleep(1);
+        }
+    }
+
+    fclose(lockFilePtr);
+
+    return 0;
+}
 
