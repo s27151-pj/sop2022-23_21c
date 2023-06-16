@@ -1,1 +1,68 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+#include <arpa/inet.h>
 
+#define Size_Buf 1024
+
+int SaveToFile(int socket, const char* fileName) {
+    int value;
+    char buffer[BUF_SIZE];
+    std::ofstream file(fileName);
+
+    while (true) {
+        value = recv(socket, buffer, BUF_SIZE, 0);
+        if (value <= 0) {
+            break;
+        }
+        file << buffer;
+        std::memset(buffer, 0, BUF_SIZE);
+    }
+    file.close();
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
+    int socketFD, port, connection;
+    struct sockaddr_in serverAddress;
+    const char* fileName = argv[2];
+
+    if (argc < 3) {
+        exit(1);
+    }
+
+    socketFD = socket(AF_INET, SOCK_STREAM, 0);
+    if (socketFD < 0) {
+        perror("Błąd tworzenia gniazda\n");
+    }
+
+    port = std::atoi(argv[1]);
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    serverAddress.sin_port = htons(port);
+    connection = connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+
+    if (connection == -1) {
+        perror("Błąd połączenia\n");
+        exit(1);
+    }
+
+    if (send(socketFD, fileName, std::strlen(fileName), 0) < 0) {
+        perror("Błąd wysyłki");
+        exit(1);
+    }
+
+    if (SaveToFile(socketFD, fileName) == 0) {
+        std::cout << "Plik zapisany poprawnie\n";
+        return 0;
+    }
+    else {
+        exit(1);
+    }
+    close(socketFD);
+
+    return 0;
+}
