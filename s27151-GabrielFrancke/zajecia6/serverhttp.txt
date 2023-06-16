@@ -1,1 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <netinet/in.h>
 
+#define BUFFER_SIZE 1024
+#define FORBIDDEN_LIST_SIZE 3
+
+char* forbidden_list[FORBIDDEN_LIST_SIZE] = {
+    "/confidential",
+    "/hidden",
+    "/private"
+};
+
+void handleConnection(int clientSocket, const struct sockaddr_in* clientAddress) {
+    char buffer[BUFFER_SIZE];
+    char request[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+    memset(request, 0, sizeof(request));
+
+    ssize_t bytesRead;
+    while ((bytesRead = read(clientSocket, buffer, sizeof(buffer) - 1)) > 0) {
+        strncpy(request, buffer, sizeof(request) - 1);
+        int i;
+        for (i = 0; i < FORBIDDEN_LIST_SIZE; ++i) {
+            if (strstr(request, forbidden_list[i]) != NULL) {
+                const char* response = "HTTP/1.1 403 Forbidden\r\n\r\n";
+                if (write(clientSocket, response, strlen(response)) < 0) {
+                    perror("Error writing to client socket");
+                }
+                close(clientSocket);
+                return;
+            }
+        }
+        char clientIP[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress->sin_addr), clientIP, INET_ADDRSTRLEN);
+        printf("Client connected: %s\n", clientIP);
+
+        const char* response = "HTTP/1.1 200 OK\r\n\r\n";
+        if (write(clientSocket, response, strlen(response)) < 0) {
+            perror("Error writing to client socket");
+        }
+
+        memset(buffer, 0, sizeof(buffer));
+        memset(request, 0, sizeof(request));
+    }
+
+    if (bytesRead < 0) {
+        perror("Error reading from client socket");
+    }
+
+    close(clientSocket);
+}
+
+int main() {
+    int serverSocket, clientSocket;
+    struct sockaddr_in serverAddress, clientAddress;
+    socklen_t clientAddressLength;
+    pid_t childPID;
+
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        perror("Error creating socket");
+        exit(EXIT_FAILURE);
+    }
+
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    serverAddress.sin_port = htons(8080);
+
+    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
+        perror("Error binding socket");
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(serverSocket, 10) < 0) {
+        perror("Error listening for connections");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Server started\n");
+
+    while (1) {
+        clientAddressLength = sizeof(clientAddress);
+        clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLength);
+        if (clientSocket < 0) {
+            perror("Error accepting client connection");
+            exit(EXIT_FAILURE);
+        }
+
+        childPID = fork();
+        if (childPID < 0) {
+            perror("Error forking process");
+            exit(EXIT_FAILURE);
+        }
+        else if (childPID == 0) {
+            close(serverSocket);
+            handleConnection(clientSocket, &clientAddress);
+            exit(EXIT_SUCCESS);
+        }
+        else {
+            close(clientSocket);
+            waitpid(-1, NULL, WNOHANG);
+        }
+    }
+
+    close(serverSocket);
+
+    return 0;
+}
