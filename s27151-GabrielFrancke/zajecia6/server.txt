@@ -1,1 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
+void handleClient(int clientSocket) {
+    int fileNameLength;
+    if (recv(clientSocket, &fileNameLength, sizeof(fileNameLength), 0) < 0) {
+        perror("Błąd odczytu długości nazwy pliku");
+        close(clientSocket);
+        return;
+    }
+
+    char fileName[fileNameLength];
+    if (recv(clientSocket, fileName, fileNameLength, 0) < 0) {
+        perror("Błąd odczytu nazwy pliku");
+        close(clientSocket);
+        return;
+    }
+
+    printf("Żądanie pliku: %s\n", fileName);
+
+    FILE* file = fopen(fileName, "rb");
+    if (file == NULL) {
+        int fileSize = -1;
+        send(clientSocket, &fileSize, sizeof(fileSize), 0);
+        perror("Błąd otwarcia pliku");
+        close(clientSocket);
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    int fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    send(clientSocket, &fileSize, sizeof(fileSize), 0);
+
+    char buffer[1024];
+    int remainingBytes = fileSize;
+    while (remainingBytes > 0) {
+        int bytesToRead = (remainingBytes < sizeof(buffer)) ? remainingBytes : sizeof(buffer);
+        int bytesRead = fread(buffer, 1, bytesToRead, file);
+        send(clientSocket, buffer, bytesRead, 0);
+        remainingBytes -= bytesRead;
+    }
+
+    fclose(file);
+    close(clientSocket);
+}
+
+int main() {
+    int serverSocket, clientSocket;
+    struct sockaddr_in serverAddress, clientAddress;
+    socklen_t clientAddressLength = sizeof(clientAddress);
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        perror("Błąd tworzenia gniazda");
+        exit(EXIT_FAILURE);
+    }
+
+    // Ustalanie adresu serwera
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    serverAddress.sin_port = htons(1234);
+
+    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
+        perror("Błąd bindowania gniazda");
+        exit(EXIT_FAILURE);
+    }
+    if (listen(serverSocket, 1) < 0) {
+        perror("Błąd nasłuchiwania");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Serwer jest gotowy do odbioru plików.\n");
+
+    while (1) {
+        clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLength);
+        if (clientSocket < 0) {
+            perror("Błąd akceptacji połączenia");
+            exit(EXIT_FAILURE);
+        }
+
+        printf("Połączono z %s:%d\n", inet_ntoa(clientAddress.sin_addr), ntohs(clientAddress.sin_port));
+        handleClient(clientSocket);
+    }
+    close(serverSocket);
+
+    return 0;
+}
