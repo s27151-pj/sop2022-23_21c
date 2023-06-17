@@ -34,3 +34,48 @@ Prowadzący polecił nam również używanie polecenia "man" w systemie Linux, k
 Na zajęciach prowadzący zaprezentował działanie sygnałów oraz przedstawił nam prosty serwer plików.
 Uważam że wykorzystanie sygnałów jest teamatem dość zaawansowanym.n
 Otzymaliśmy na zajeęciach rónież złożone i skomplikowane zadania, niestety przez natłok pracy- połączenia roboty i końca stódiów gdzie teraz u każdego są egzaminy nie starczyło mi czasu by przerobić zadania, mam nadzieję że uda mi się nadrobić materiał.
+
+
+https://sites.google.com/pjwstk.edu.pl/t0meck-sop/home
+
+pid:id-forka  ppid:id parenta-forka
+R PPID 23948
+D PPID 23950
+D PID 24000
+R PID 23950
+
+
+
+
+
+SOCK_STREAM: TCP(reliable, connection oriented)
+SOCK_DGRAN: UDP(unreliable, connectionless)
+https://www.geeksforgeeks.org/socket-programming-cc/?fbclid=IwAR1AHkHkcl3sPCWSSyA3poQCg0QOlKgiGfcuesWjT1nGqGdT7rTSSy0JMcs
+
+https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
+
+
+Co robi wait
+-czeka na zamknięcie child procesu - jeśli jest to child proces nigdy się niedoczeka
+
+Co robi waitpid
+
+
+
+Na jakiej zasadzie działa fork
+
+
+Setsockopt - Pomaga to w manipulowaniu opcjami dla gniazda określonego przez deskryptor pliku sockfd. Jest to całkowicie opcjonalne, ale pomaga w ponownym użyciu adresu i portu. Zapobiega błędom takim jak: "adres już w użyciu".
+
+listen - Ustawia gniazdo serwera w trybie pasywnym, w którym czeka, aż klient zbliży się do serwera w celu nawiązania połączenia. Backlog, definiuje maksymalną długość, do której może urosnąć kolejka oczekujących połączeń dla sockfd. Jeśli żądanie połączenia nadejdzie, gdy kolejka jest pełna, klient może otrzymać błąd ze wskazaniem ECONNREFUSED.
+
+bind - Po utworzeniu gniazda funkcja bind wiąże gniazdo z adresem i numerem portu określonym w addr (niestandardowa struktura danych). W przykładowym kodzie wiążemy serwer z hostem lokalnym, dlatego używamy INADDR_ANY do określenia adresu IP.
+
+jeżeli mamy zbindoway socket możemy na nim wysłuchiwać
+
+accept - Wyodrębnia pierwsze żądanie połączenia z kolejki oczekujących połączeń dla nasłuchującego gniazda, sockfd, tworzy nowe połączone gniazdo i zwraca nowy deskryptor pliku odnoszący się do tego gniazda. W tym momencie połączenie między klientem a serwerem jest ustanowione i są oni gotowi do przesyłania danych.
+
+Etapy dla klienta
+Połączenie gniazda: Dokładnie tak samo jak w przypadku tworzenia gniazda serwera
+Connect: Wywołanie systemowe connect() łączy gniazdo określone przez deskryptor pliku sockfd z adresem określonym przez addr. Adres i port serwera są określone w addr.
+
